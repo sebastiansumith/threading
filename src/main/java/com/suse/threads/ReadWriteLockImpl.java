@@ -1,5 +1,7 @@
 package com.suse.threads;
 
+import org.apache.log4j.Logger;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -16,6 +18,7 @@ public class ReadWriteLockImpl {
     private Lock readLock = readWriteLock.readLock();
     private Lock writeLock = readWriteLock.writeLock();
     private Map<String, String> synchMap = new HashMap<String, String>();
+    final static Logger logger = Logger.getLogger(ReadWriteLockImpl.class);
 
     public ReadWriteLockImpl(){
 
@@ -24,12 +27,12 @@ public class ReadWriteLockImpl {
     public void getData(final String key){
         this.readLock.lock();
         try{
-            System.out.println(Thread.currentThread().getName() + " reading: "+key);
+            logger.info(Thread.currentThread().getName() + " reading: "+key);
             synchMap.get(key);
         }finally {
             readLock.unlock();
         }
-        System.out.println(Thread.currentThread().getName() + " reading finished: "+key);
+        logger.info(Thread.currentThread().getName() + " reading finished: "+key);
     }
 
     public void removeData(final String key){
@@ -44,13 +47,13 @@ public class ReadWriteLockImpl {
     public void writeData(final String key, final String value) throws InterruptedException {
         this.writeLock.lock();
         try {
-            System.out.println(Thread.currentThread().getName() + " writing: "+key);
+            logger.info(Thread.currentThread().getName() + " writing: "+key);
             this.synchMap.put(key, value);
             sleep(1000);
         }finally {
             writeLock.unlock();
         }
-        System.out.println(Thread.currentThread().getName() + "finished writing: "+key);
+        logger.info(Thread.currentThread().getName() + "finished writing: "+key);
     }
 
     public static void main(String args []){
